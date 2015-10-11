@@ -30,7 +30,11 @@ IPAddress ip(192, 168, 1, 177);
 // (port 80 is default for HTTP):
 EthernetServer server(80);
 
+float tempC;
+int reading;
+
 void setup() {
+  analogReference(INTERNAL);
   // Open serial communications and wait for port to open:
   Serial.begin(9600);
   while (!Serial) {
@@ -65,7 +69,7 @@ void loop() {
           client.println("HTTP/1.1 200 OK");
           client.println("Content-Type: text/html");
           client.println("Connection: close");  // the connection will be closed after completion of the response
-          client.println("Refresh: 5");  // refresh the page automatically every 5 sec
+          client.println("Refresh: 10");  // refresh the page automatically every 5 sec
           client.println();
           client.println("<!DOCTYPE HTML>");
           client.println("<html>");
@@ -78,6 +82,12 @@ void loop() {
             client.print(sensorReading);
             client.println("<br />");
           }
+          reading = analogRead(1);
+          tempC = reading / 9.31;
+          client.print("Temp (C): ");
+          client.print(tempC);
+          client.print("<br>Temp (F): ");
+          client.print(1.8 * tempC + 32);
           client.println("</html>");
           break;
         }
